@@ -19,7 +19,7 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping("/api")
 public class DataController {
-    Logger logger = LoggerFactory.getLogger(DataController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataController.class);
 
     DataService dataService;
 
