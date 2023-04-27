@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 @NoArgsConstructor
 public class DataDto {
 
-    @Value("${service.key}")
-    String serviceKey;
-
     String pageNo;
 
     String numOfRows;
