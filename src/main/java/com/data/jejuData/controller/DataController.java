@@ -40,13 +40,55 @@ public class DataController {
     @GetMapping(value = "/data")
     public ResponseEntity<String> getAutoKiosk(DataDto dataDto) throws Exception {
         JSONObject dataJson = dataService.getAutoKioskService(dataDto);
+
+        /**
+         * RESPONSE 영역
+         * */
         JSONObject dataResponse = dataJson.getJSONObject("response");
+
+        /**
+         * HEADER 영역
+         * */
         JSONObject dataHeader = dataResponse.getJSONObject("header");
+        String resultCode = dataHeader.getString("resultCode");
+        String resultMsg = dataHeader.getString("resultMsg");
+        /**
+         * BODY 영역
+         * */
+        JSONObject dataBody = dataResponse.getJSONObject("body");
+        String dataPageNo = dataBody.getString("pageNo");
+        String datatotalCount = dataBody.getString("totalCount");
+        JSONObject dataItems = dataBody.getJSONObject("items");
+        String dataCd;
+        String regDt;
+        String laCrdnt;
+        String loCrdnt;
+        String instlPlaceNm;
+        String operTimeInfo;
+        String mngrTelno;
+        String rnAdres;
+        String etcCn;
+        JSONArray dataItemArrays = dataItems.getJSONArray("item");
+        for (int i = 0 ; i < dataItemArrays.length() ; i++ ) {
+            JSONObject itemList = (JSONObject) dataItemArrays.get(i);
+            logger.info("ItemList : {}" , itemList);
+            dataCd          = itemList.getString("dataCd");
+            regDt           = itemList.getString("regDt");
+            laCrdnt         = itemList.getString("laCrdnt");
+            loCrdnt         = itemList.getString("loCrdnt");
+            instlPlaceNm    = itemList.getString("instlPlaceNm");
+            operTimeInfo    = itemList.getString("operTimeInfo");
+            mngrTelno       = itemList.getString("mngrTelno");
+            rnAdres         = itemList.getString("rnAdres");
+            etcCn           = itemList.getString("etcCn");
+
+        }
 
         logger.info("Response : {}", dataResponse);
         logger.info("Header : {}", dataHeader);
-        logger.info("resultCode : {}" ,dataHeader.getString("resultCode"));
-        logger.info("resultCode : {}" ,dataHeader.getString("resultMsg"));
+        logger.info("Body : {}", dataBody);
+        logger.info("resultCode : {}" ,resultCode);
+        logger.info("resultCode : {}" ,resultMsg);
 
 
         RecvDataDto recvDataDto = new RecvDataDto();
