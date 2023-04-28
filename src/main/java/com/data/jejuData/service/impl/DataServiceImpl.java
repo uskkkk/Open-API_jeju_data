@@ -5,9 +5,15 @@ import com.data.jejuData.dto.DataDto;
 import com.data.jejuData.service.DataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 
 @Service
@@ -27,7 +33,7 @@ public class DataServiceImpl implements DataService {
     }
 
     @Override
-    public HttpURLConnection getAutoKioskService(DataDto dataDto) throws IOException {
+    public JSONObject getAutoKioskService(DataDto dataDto) throws Exception {
 
         StringBuilder uriBuilder = new StringBuilder(GET_AUTO_KIOSK_URI);
         uriBuilder.append("?" + URLEncoder.encode("serviceKey",UTF_8) + "=" + URLEncoder.encode(properties.getKey(),UTF_8));
@@ -47,6 +53,33 @@ public class DataServiceImpl implements DataService {
 
         logger.info("Response code : {}", con.getResponseCode());
 
-        return con;
+        BufferedReader rd;
+
+        JSONObject jsonObject = null;
+
+        if (!(con.getResponseCode() == 200)) {
+            rd = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+            return jsonObject;
+        }
+
+        rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+        StringBuffer sb = new StringBuffer();
+        String line;
+
+        while ((line = rd.readLine()) != null) {
+            sb.append(line);
+        }
+
+        rd.close();
+        con.disconnect();
+
+        jsonObject = new JSONObject(sb.toString());
+
+        logger.info("sb.toSting() : {} ", sb.toString());
+        logger.info("RESULT : {}", jsonObject);
+
+
+        return jsonObject;
     }
 }

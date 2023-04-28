@@ -1,13 +1,12 @@
 package com.data.jejuData.service;
 
 import com.data.jejuData.dto.DataDto;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 
 public interface DataService {
-    public HttpURLConnection getAutoKioskService(DataDto dataDto) throws URISyntaxException, IOException;
+    public JSONObject getAutoKioskService(DataDto dataDto) throws Exception;
 }

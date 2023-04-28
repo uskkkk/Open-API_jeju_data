@@ -1,12 +1,15 @@
 package com.data.jejuData.controller;
 
 import com.data.jejuData.dto.DataDto;
+import com.data.jejuData.dto.RecvDataDto;
 import com.data.jejuData.service.DataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/api")
@@ -34,32 +38,22 @@ public class DataController {
     }
 
     @GetMapping(value = "/data")
-    public ResponseEntity<String> getAutoKiosk(DataDto dataDto) throws URISyntaxException, IOException {
-        HttpURLConnection con = dataService.getAutoKioskService(dataDto);
+    public ResponseEntity<String> getAutoKiosk(DataDto dataDto) throws Exception {
+        JSONObject dataJson = dataService.getAutoKioskService(dataDto);
+        JSONObject dataResponse = dataJson.getJSONObject("response");
+        JSONObject dataHeader = dataResponse.getJSONObject("header");
 
-        BufferedReader rd;
-
-        if (!(con.getResponseCode() == 200)) {
-            rd = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-            return (ResponseEntity<String>) ResponseEntity.badRequest();
-        }
-
-        rd = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-        StringBuffer sb = new StringBuffer();
-        String line;
-
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-
-        rd.close();
-        con.disconnect();
-
-        logger.info("RESULT : {}", sb.toString());
+        logger.info("Response : {}", dataResponse);
+        logger.info("Header : {}", dataHeader);
+        logger.info("resultCode : {}" ,dataHeader.getString("resultCode"));
+        logger.info("resultCode : {}" ,dataHeader.getString("resultMsg"));
 
 
+        RecvDataDto recvDataDto = new RecvDataDto();
 
-        return ResponseEntity.ok("Succes");
+
+        logger.info("RESULT_JSON : {}", dataJson);
+
+        return ResponseEntity.ok("Success");
     }
 }
